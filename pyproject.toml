@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kashrock"
-version = "0.1.0"
+version = "0.1.1"
 description = "Official Python SDK for the KashRock esports API — props, odds, matches, and scores."
 readme = "README.md"
 license = "MIT"
