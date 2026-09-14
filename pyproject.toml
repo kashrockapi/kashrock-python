@@ -25,7 +25,7 @@ dependencies = ["httpx>=0.26,<0.29"]
 Homepage = "https://www.kashrock.com"
 Documentation = "https://www.kashrock.com/docs"
 API = "https://kashrock.up.railway.app"
-Repository = "https://github.com/ovitalszn-cyber/kashrock-python"
+Repository = "https://github.com/kashrockapi/kashrock-python"
 
 [tool.setuptools.packages.find]
 where = ["src"]
