@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kashrock"
+version = "0.1.0"
+description = "Official Python SDK for the KashRock esports API — props, odds, matches, and scores."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "KashRock", email = "ovitalszn@gmail.com" }]
+keywords = ["esports", "api", "cs2", "valorant", "dota", "props", "odds"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP",
+]
+dependencies = ["httpx>=0.26,<0.29"]
+
+[project.urls]
+Homepage = "https://www.kashrock.com"
+Documentation = "https://www.kashrock.com/docs"
+API = "https://kashrock.up.railway.app"
+Repository = "https://github.com/ovitalszn-cyber/kashrock-python"
+
+[tool.setuptools.packages.find]
+where = ["src"]
