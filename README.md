@@ -1,8 +1,10 @@
 # KashRock Python SDK
 
-Official Python client for the [KashRock esports API](https://www.kashrock.com).
+Official Python client for the KashRock esports API.
 
 Props, odds, matches, live scores, and history — one key, normalized IDs.
+
+Site: https://www.kashrock.com
 
 ## Install
 
@@ -19,7 +21,9 @@ kr = KashRock("YOUR_API_KEY")
 print(kr.props("cs2")["props"][0])
 ```
 
-Get a free Sandbox key at [kashrock.com/pricing](https://www.kashrock.com/pricing). Docs: [kashrock.com/docs](https://www.kashrock.com/docs).
+Sandbox key: https://www.kashrock.com/pricing
+
+Docs: https://www.kashrock.com/docs
 
 `KASHROCK_API_KEY` works if you do not want the key in code.
 
@@ -35,7 +39,9 @@ kr.gamelogs("cs2", "zywoo")
 kr.history_tape(market_key="kr_mk_…")
 ```
 
-Same paths as the HTTP API and the [KashRock MCP](https://www.kashrock.com/mcp). Stacks are not included.
+Same paths as the HTTP API and the KashRock MCP. Stacks are not included.
+
+MCP: https://www.kashrock.com/mcp
 
 Sandbox keys are CS2 props only. Hobby+ unlocks the rest of the board. Builder+ unlocks matches, live, gamelogs, and history.
 
