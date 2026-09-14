@@ -7,8 +7,10 @@ Props, odds, matches, live scores, and history — one key, normalized IDs.
 ## Install
 
 ```bash
-pip install kashrock
+pip install git+https://github.com/ovitalszn-cyber/kashrock-python.git
 ```
+
+PyPI `kashrock` is the same package once the first release is published.
 
 ## Four lines to a live prop
 
