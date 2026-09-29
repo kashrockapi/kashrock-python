@@ -43,7 +43,7 @@ Same paths as the HTTP API and the KashRock MCP. Stacks are not included.
 
 MCP: https://www.kashrock.com/mcp
 
-Sandbox keys are CS2 props only. Hobby+ unlocks the rest of the board. Builder+ unlocks matches, live, gamelogs, and history.
+Sandbox keys work on every sport, up to 500 requests per UTC day: props, matches, players, delayed live scores, and 30 days of history. Hobby+ adds consensus lines and live odds. Builder+ adds the live WebSocket and quote history.
 
 ## License
 
