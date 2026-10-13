@@ -62,7 +62,8 @@ class V7:
     ) -> Any:
         """Fixtures, in-progress and finished matches for one sport, or ``sport="all"``.
 
-        ``ids`` takes one ``kr_match_id`` or up to 100. ``team`` takes a ``kr_tm_`` id, slug or name.
+        ``ids`` takes one ``kr_match_id`` or up to 100 -- this is the only route that accepts a list.
+        ``team`` takes a ``kr_tm_`` id, slug or name.
         ``include`` adds ``boxscore``, ``prep``, ``veto``, ``maps``, ``player_board``, ``lines``, ``streams``
         or ``h2h``.
         """
@@ -196,8 +197,8 @@ class V7:
         self,
         sport: str,
         *,
+        id: Optional[str] = None,
         q: Optional[str] = None,
-        ids: Ids = None,
         sort: Optional[str] = None,
         include: Optional[str] = None,
         format: Optional[str] = None,
@@ -206,27 +207,34 @@ class V7:
     ) -> Any:
         """Find a player, look one up, or rank them.
 
-        ``ids`` takes ``kr_pl_`` and ``kr_cb_`` ids, one or up to 100; retired name-hash ids still resolve.
-        ``sort="rank"`` ranks them. ``include`` adds ``research``, ``gamelogs``, ``stats`` or ``stats_full``.
+        ``id`` takes one ``kr_pl_`` or ``kr_cb_`` id -- the route refuses a list with
+        ``one_id_required``, so batch by calling it per player. Retired name-hash ids still resolve.
+        ``sort="rank"`` ranks them. ``include`` adds ``research``, ``gamelogs``, ``stats``,
+        ``stats_full``, ``history`` or ``media``; the blocks nest under ``include`` on the envelope,
+        and ``research`` or ``gamelogs`` alone answer with the block as the body.
         """
-        return self._sport(sport, "players", q=q, ids=_joined(ids), sort=sort,
+        return self._sport(sport, "players", id=id, q=q, sort=sort,
                            include=include, format=format, limit=limit, **params)
 
     def teams(
         self,
         sport: str,
         *,
+        id: Optional[str] = None,
         q: Optional[str] = None,
-        ids: Ids = None,
+        team2: Optional[str] = None,
         include: Optional[str] = None,
         limit: Optional[int] = None,
         **params: Any,
     ) -> Any:
-        """Team research. ``ids`` takes ``kr_tm_`` ids.
+        """Team research for one team. ``id`` takes a single ``kr_tm_`` id.
 
-        ``include`` adds ``form``, ``roster``, ``maps``, ``h2h``, ``main_lines`` or ``upcoming``.
+        The route takes ``id``, not ``ids``, and only one: ``include`` blocks attach only when the
+        lookup resolves to exactly one team, so passing a name through ``q`` that matches several
+        returns the list without blocks. ``include`` adds ``form``, ``roster``, ``maps``, ``h2h``,
+        ``main_lines`` or ``upcoming``; ``h2h`` also needs ``team2``.
         """
-        return self._sport(sport, "teams", q=q, ids=_joined(ids), include=include, limit=limit, **params)
+        return self._sport(sport, "teams", id=id, q=q, team2=team2, include=include, limit=limit, **params)
 
     # -- breakdown -------------------------------------------------------------------------------
 

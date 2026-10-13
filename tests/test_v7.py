@@ -62,7 +62,7 @@ def test_every_v7_route_builds_its_documented_path(stub) -> None:
     v7.flow("cs2", kind="steam")
     v7.live("all", include="boxscore")
     v7.players("cs2", sort="rank", include="stats")
-    v7.teams("cs2", include="form")
+    v7.teams("cs2", id="kr_tm_87b794cec83a", include="form")
     v7.history("cs2", kind="lines", match="kr_cs2_a-vs-b-13-10-2026")
     v7.results("cs2", grade="hit")
     v7.breakdown("cs2", team="vitality")
@@ -78,7 +78,7 @@ def test_every_v7_route_builds_its_documented_path(stub) -> None:
         "/v7/cs2/flow?kind=steam",
         "/v7/all/live?include=boxscore",
         "/v7/cs2/players?sort=rank&include=stats",
-        "/v7/cs2/teams?include=form",
+        "/v7/cs2/teams?id=kr_tm_87b794cec83a&include=form",
         "/v7/cs2/history?kind=lines&match=kr_cs2_a-vs-b-13-10-2026",
         "/v7/cs2/results?grade=hit",
         "/v7/cs2/breakdown?team=vitality",
@@ -87,16 +87,34 @@ def test_every_v7_route_builds_its_documented_path(stub) -> None:
     ]
 
 
-def test_ids_takes_one_id_or_a_list_and_sends_a_comma_list(stub) -> None:
+def test_only_matches_takes_a_list_of_ids(stub) -> None:
+    """matches batches up to 100. teams takes id=, players takes one id: the routes refuse more."""
     client, seen = stub
     client.v7.matches("cs2", ids="kr_cs2_a-vs-b-13-10-2026")
     client.v7.matches("cs2", ids=["kr_cs2_a-vs-b-13-10-2026", "kr_cs2_c-vs-d-13-10-2026"])
-    client.v7.players("cs2", ids=["kr_pl_33863a5e1393", "kr_cb_000000000000"])
+    client.v7.players("cs2", id="kr_pl_33863a5e1393")
+    client.v7.teams("cs2", id="kr_tm_87b794cec83a")
     assert seen == [
         "/v7/cs2/matches?ids=kr_cs2_a-vs-b-13-10-2026",
         "/v7/cs2/matches?ids=kr_cs2_a-vs-b-13-10-2026%2Ckr_cs2_c-vs-d-13-10-2026",
-        "/v7/cs2/players?ids=kr_pl_33863a5e1393%2Ckr_cb_000000000000",
+        "/v7/cs2/players?id=kr_pl_33863a5e1393",
+        "/v7/cs2/teams?id=kr_tm_87b794cec83a",
     ]
+
+
+def test_teams_sends_id_not_ids(stub) -> None:
+    """Regression: an ids= query is ignored by the route, the catalog returns every team, and the
+    include blocks never attach -- they only attach on a single-row lookup."""
+    client, seen = stub
+    client.v7.teams("cs2", id="kr_tm_87b794cec83a", include="roster")
+    assert seen == ["/v7/cs2/teams?id=kr_tm_87b794cec83a&include=roster"]
+    assert "ids=" not in seen[0]
+
+
+def test_teams_h2h_sends_team2(stub) -> None:
+    client, seen = stub
+    client.v7.teams("cs2", id="kr_tm_87b794cec83a", team2="Natus Vincere", include="h2h")
+    assert seen == ["/v7/cs2/teams?id=kr_tm_87b794cec83a&team2=Natus+Vincere&include=h2h"]
 
 
 def test_an_unset_parameter_is_not_sent(stub) -> None:
