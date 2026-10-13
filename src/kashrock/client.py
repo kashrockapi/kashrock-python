@@ -5,10 +5,15 @@ from typing import Any, Optional
 
 from kashrock._http import DEFAULT_BASE, Http
 from kashrock.errors import KashRockAuthError
+from kashrock.v7 import V7
 
 
 class KashRock:
-    """Thin client for https://kashrock.up.railway.app."""
+    """Thin client for https://kashrock.up.railway.app.
+
+    The V7 routes are on ``.v7`` (``client.v7.matches("cs2")``); prefer them for new work. The methods on this
+    class call V6, which is sunset on 12 December 2026. See https://www.kashrock.com/docs/migrate-v6-v7
+    """
 
     def __init__(
         self,
@@ -24,6 +29,7 @@ class KashRock:
                 status=401,
             )
         self._http = Http(key, base_url=base_url, timeout=timeout)
+        self.v7 = V7(self._http)
 
     def _get(self, path: str, **params: Any) -> Any:
         return self._http.get(path, params)

@@ -18,6 +18,10 @@ DEFAULT_BASE = "https://kashrock.up.railway.app"
 
 def _detail(body: Any) -> str:
     if isinstance(body, dict):
+        # A V7 refusal nests one shape under "error"; V6 serves a flat "detail".
+        error = body.get("error")
+        if isinstance(error, dict) and isinstance(error.get("message"), str):
+            return error["message"]
         detail = body.get("detail")
         if isinstance(detail, str):
             return detail
@@ -30,7 +34,12 @@ def _detail(body: Any) -> str:
 
 def raise_for_status(status: int, body: Any) -> None:
     text = _detail(body)
-    if status in (401, 403) and "plan" in text.lower():
+    code = ""
+    if isinstance(body, dict) and isinstance(body.get("error"), dict):
+        code = str(body["error"].get("code") or "")
+    if code in ("rate_limited", "quota_exceeded"):
+        raise KashRockRateLimitError(text, status=status, body=body)
+    if code == "plan_required" or (status in (401, 403) and "plan" in text.lower()):
         raise KashRockPlanError(text, status=status, body=body)
     if status in (401, 403):
         raise KashRockAuthError(text, status=status, body=body)
