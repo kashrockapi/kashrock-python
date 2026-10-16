@@ -11,6 +11,7 @@ from kashrock.errors import (
     KashRockError,
     KashRockPlanError,
     KashRockRateLimitError,
+    _upgrade_block,
 )
 
 DEFAULT_BASE = "https://kashrock.up.railway.app"
@@ -23,6 +24,10 @@ def _detail(body: Any) -> str:
             return detail
         if detail is not None:
             return json.dumps(detail)
+        # V7 error envelope: {"error": {"message": ...}}
+        error = body.get("error")
+        if isinstance(error, dict) and isinstance(error.get("message"), str):
+            return error["message"]
     if isinstance(body, str):
         return body
     return json.dumps(body)
@@ -30,9 +35,11 @@ def _detail(body: Any) -> str:
 
 def raise_for_status(status: int, body: Any) -> None:
     text = _detail(body)
-    if status in (401, 403) and "plan" in text.lower():
-        raise KashRockPlanError(text, status=status, body=body)
-    if status in (401, 403):
+    if status == 403 or (status == 401 and "plan" in text.lower()):
+        # Every plan gate now carries the API's upgrade object — let the
+        # exception surface it even when "plan" isn't in the detail text.
+        if _upgrade_block(body) or "plan" in text.lower():
+            raise KashRockPlanError(text, status=status, body=body)
         raise KashRockAuthError(text, status=status, body=body)
     if status == 429:
         raise KashRockRateLimitError(text, status=status, body=body)
